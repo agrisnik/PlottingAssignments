@@ -13,17 +13,22 @@ plot1 <- function(directory, name)
     if(file.exists(filename))
     {
       data <- read.table(filename,sep = ";",header = TRUE,skip = 0, na.strings = "?", stringsAsFactors = FALSE)
+      data <- na.omit(data)
     }
-    else {  stop(paste("The activity label file: ",activitylabels.filename, " was not found"))   }
+    else {  stop(paste("The data file: ",filename, " was not found"))   }
     
     ## opening the graphics device
     filename <- paste(directory,"plot1.png", sep ="/")
     png(filename,width = 480, height = 480)
     
     
+    #transforming date into Date/Time format    
+    data$fixed_Data <- as.POSIXct(paste(data$Date, data$Time), format = "%d/%m/%Y %T")
+    sub.data <- subset(data, as.Date(fixed_Data) >= '2007-02-01' & as.Date(fixed_Data) <= '2007-02-02' )
+    
     #producing histogram
-    hist(as.numeric(data$Global_active_power), col = "red", main = "Global Active Power", 
-         xlab = "Global Active Power (kilowatts)", breaks = 16,axes = TRUE, freq = TRUE)
+    hist(as.numeric(sub.data$Global_active_power), col = "red", main = "Global Active Power", 
+         xlab = "Global Active Power (kilowatts)", axes = TRUE, freq = TRUE)
     
     #closing graphics device
     dev.off()
